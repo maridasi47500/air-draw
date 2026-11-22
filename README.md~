@@ -1,4 +1,4 @@
-# ✋🎨 Air Draw
+# ✋🎨 Air Light
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
 ![OpenCV](https://img.shields.io/badge/OpenCV-green)
@@ -168,17 +168,14 @@ Tous les réglages se trouvent dans **`config.py`** :
 
 ## 🗺️ Pistes d'amélioration
 
-- [ ] Réglage de l'épaisseur du pinceau par geste
-- [ ] Annuler / rétablir (undo / redo)
 - [ ] Prise en charge de deux mains
-- [ ] Export en SVG
 - [ ] Reconnaissance de gestes personnalisables
 
 ---
 
 ## 👤 Auteur
 
-Projet réalisé par [@irwinjessk](https://github.com/irwinjessk).
+Projet réalisé par [@maridasi47500](https://github.com/maridasi47500).
 
 Les retours et suggestions sont les bienvenus : ouvre une *issue* ou propose une *pull request*.
 

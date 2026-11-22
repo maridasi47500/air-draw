@@ -10,6 +10,16 @@
 Le projet s'appuie sur la **vision par ordinateur** (Computer Vision), le **suivi de la main** (Hand Tracking) et la **reconnaissance de gestes** (Hand Gesture Recognition) pour transformer des mouvements naturels en interface utilisateur.
 
 
+## :camera: Démonstration
+![alt text](violet.jpg)
+![alt text](vert1.jpg)
+![alt text](rouge.jpg)
+![alt text](orange.jpg)
+![alt text](bleu.jpg)
+![alt text](jaune.jpg)
+
+--- 
+
 ## ✨ Fonctionnalités
 
 - Détection de la main en temps réel avec **21 points de repère** (landmarks) via MediaPipe
