@@ -87,11 +87,11 @@ def _identify(ext: dict[str, bool]) -> Gesture:
     if not ext["index"] and ext["middle"] and not ext["thumb"] and not ext["ring"] and not ext["pinky"]:
         return Gesture.JAUNE
     if not ext["index"] and not ext["middle"] and not ext["thumb"] and ext["ring"] and ext["pinky"]:
-        return Gesture.VIOLET
+        return Gesture.ORANGE
     if ext["index"] and ext["middle"] and  ext["ring"] and ext["pinky"] and ext["thumb"]:
         return Gesture.TURNOFF
     if all_down:
-        return Gesture.BLANC
+        return Gesture.NONE
     return Gesture.NONE
 
 

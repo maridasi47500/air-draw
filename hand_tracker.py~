@@ -29,8 +29,9 @@ class HandTracker:
         # STEP 2: Create an HandLandmarker object.
         base_options = python.BaseOptions(model_asset_path=model_path)
         options = vision.HandLandmarkerOptions(base_options=base_options,
-                                               num_hands=2)
+                                               num_hands=1)
         self.detector = vision.HandLandmarker.create_from_options(options)
+        self.drawsth=vision.drawing_utils.draw_landmarks
         
 
         
@@ -39,23 +40,55 @@ class HandTracker:
         """Analyse une frame BGR. Dessine le squelette de la main si draw=True."""
         # STEP 3: Load the input image.
         #image = mp.Image.create_from_file("image.jpg")
+        #frame=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image=mp.Image(
             image_format=mp.ImageFormat.SRGB,
             data=frame
         )
         h, w = frame.shape[:2]
-        #image=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
         
         # STEP 4: Detect hand landmarks from the input image.
         detection_result = self.detector.detect(image)
 
-        if not detection_result.hand_landmarks:
-            return None
 
-        hand_lms = detection_result.hand_landmarks[0]
-        print(hand_lms)
-        print(dict(hand_lms))
-        state = classify_gesture(hand_lms[0], w, h)
+
+        try:
+            if not detection_result.hand_landmarks:
+                return None
+            hand_lms = detection_result.hand_landmarks[0]
+            #print(hand_lms)
+            #print(dict(hand_lms))
+            state = classify_gesture(hand_lms, w, h)
+            if draw:
+                RED_COLOR = (0, 0, 255)
+                WHITE_COLOR = (224, 224, 224)
+                BLACK_COLOR = (0, 0, 0)
+                RED_COLOR = (0, 0, 255)
+                GREEN_COLOR = (0, 128, 0)
+                BLUE_COLOR = (255, 0, 0)
+                print(hand_lms)
+                vision.drawing_utils.draw_landmarks(
+                    image= frame,
+                    landmark_list=(hand_lms),
+                    connections=mp.tasks.vision.FaceLandmarksConnections.HAND_CONNECTIONS,
+                    landmark_drawing_spec=mp.tasks.vision.drawing_utils.DrawingSpec(color=RED_COLOR, thickness=2, circle_radius=3),
+                    connection_drawing_spec=vision.drawing_utils.DrawingSpec(color=BLUE_COLOR, thickness=2),
+                    is_drawing_landmarks=True
+                )
+        except Exception as e:
+            try:
+                print("e error hands", e)
+                if not detection_result.hand_landmarks:
+                    return None
+                hand_lms = detection_result.hand_landmarks[0]
+                state = classify_gesture(hand_lms[0], w, h)
+            except Exception as f:
+                print("f error hands", f)
+                if not detection_result.hand_landmarks:
+                    return None
+                hand_lms = detection_result.hand_landmarks
+                state = classify_gesture(hand_lms, w, h)
 
         return state
 

@@ -80,19 +80,19 @@ def _identify(ext: dict[str, bool]) -> Gesture:
         return Gesture.ROUGE
     if ext["thumb"] and ext["index"] and others_down:
         return Gesture.VIOLET
-    if ext["index"] and not ext["thumb"] and ext["middle"] and not ext["ring"] and not ext["pinky"]:
+    if ext["index"] and not ext["thumb"] and not ext["middle"] and not ext["ring"] and not ext["pinky"]:
         return Gesture.BLEU
     if ext["index"] and ext["middle"] and not ext["thumb"] and not ext["ring"] and not ext["pinky"]:
         return Gesture.VERT
     if not ext["index"] and ext["middle"] and not ext["thumb"] and not ext["ring"] and not ext["pinky"]:
         return Gesture.JAUNE
     if not ext["index"] and not ext["middle"] and not ext["thumb"] and ext["ring"] and ext["pinky"]:
-        return Gesture.VIOLET
+        return Gesture.ORANGE
     if ext["index"] and ext["middle"] and  ext["ring"] and ext["pinky"] and ext["thumb"]:
         return Gesture.TURNOFF
     if all_down:
-        return Gesture.BLANC
-    return Gesture.BLANC
+        return Gesture.NONE
+    return Gesture.NONE
 
 
 def classify_gesture(landmarks, w: int, h: int) -> HandState:
