@@ -1,33 +1,20 @@
-# ✋🎨 Air Draw
+# ✋🎨 Air Light
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
 ![OpenCV](https://img.shields.io/badge/OpenCV-green)
 ![MediaPipe](https://img.shields.io/badge/MediaPipe-orange)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-**Dessine dans les airs avec ta main.** Air Draw est une application de dessin sans contact : une webcam, une main, et quelques lignes de Python suffisent. Pas de souris, pas de clavier, pas d'écran tactile.
+**Allume ta lampe intelligente avec ta main dans les airs.** Air Light est une application pour allumer une lampe intelligente sans contact : une webcam, une main, et quelques lignes de Python suffisent. Pas de souris, pas de clavier, pas d'écran tactile.
 
 Le projet s'appuie sur la **vision par ordinateur** (Computer Vision), le **suivi de la main** (Hand Tracking) et la **reconnaissance de gestes** (Hand Gesture Recognition) pour transformer des mouvements naturels en interface utilisateur.
 
-## 🎬 Démonstration
-
-<p align="center">
-  <img src="docs/demo.gif" width="640" alt="Démo Air Draw">
-</p>
-
-▶️ **[Voir la vidéo complète sur YouTube](https://youtu.be/D3BjOMaaXmA)**
-
----
 
 ## ✨ Fonctionnalités
 
 - Détection de la main en temps réel avec **21 points de repère** (landmarks) via MediaPipe
-- Dessin au doigt sur un canvas virtuel superposé au flux vidéo
-- Menu de couleurs sélectionnable par geste (Bleu, Vert, Rouge, Jaune) et bouton **Clear All**
-- Gomme contrôlée par la paume de la main
-- Lissage du tracé par **Exponential Moving Average (EMA)** pour réduire les tremblements
-- Sauvegarde du dessin en **PNG** (fond blanc) par un simple pouce levé
 - Affichage en direct du geste détecté, pratique pour déboguer
+- Connexion à la lampe en wifi
 
 ---
 
@@ -35,17 +22,18 @@ Le projet s'appuie sur la **vision par ordinateur** (Computer Vision), le **suiv
 
 | Geste | Action |
 |-------|--------|
-| ☝️ Index seul levé | **Dessiner** |
-| ✌️ Index + majeur levés | **Sélectionner** une couleur ou *Clear All* (pointe le bouton dans le menu) |
-| 🖐️ Paume ouverte (4 doigts levés) | **Gommer** |
-| 👍 Pouce levé, autres doigts repliés | **Sauvegarder** le dessin dans `output/` |
+| ✌️ Pouce + index levés | la lampe s'allume en *** violet ** |
+| ☝️ Index seul levé | la lampe s'allume en **bleu** |
+| ✌️ Index + majeur levés | la lampe s'allume en *** vert ** |
+| ☝️ majeur seul levé | la lampe s'allume en **jaune** |
+| ✌️ annulaire + petit doigt levés, autres doigts repliés | la lampe s'allume en *** orange ** |
+| 🖐️ Paume ouverte (4 doigts levés) | **aucune couleur choisie** |
+| 👍 Pouce levé, autres doigts repliés | couleur choisie **rouge** |
 
 ### Raccourcis clavier
 
 | Touche | Action |
 |--------|--------|
-| `s` | Sauvegarder le dessin |
-| `c` | Effacer le canvas |
 | `q` ou `Échap` | Quitter |
 
 ---
@@ -72,8 +60,6 @@ output/drawing_AAAAMMJJ_HHMMSS.png
 1. **Capture** : OpenCV lit la webcam et l'image est retournée comme un miroir.
 2. **Détection** : MediaPipe Hands localise la main et ses 21 points de repère.
 3. **Reconnaissance** : `gestures.py` compare la position des extrémités des doigts à leurs articulations pour déterminer quels doigts sont levés, puis en déduit le geste.
-4. **Action** : en mode dessin, la position de l'index est lissée (EMA) puis reliée au point précédent pour former un trait sur le canvas.
-5. **Affichage** : le canvas (fond noir = transparent) est superposé à la vidéo, avec le menu et les informations d'état.
 
 ---
 
@@ -133,14 +119,20 @@ chmod +x run.sh   # une seule fois
 ---
 
 ## 🎮 Utilisation
+1. à la racine écris un .env et dedans écris quelque chose comme LAMPE_ADRESSE_IP="adresse ip de la lampe surplife , ou zengge ou magic life connectée à ton réseau wifi"
+2. Lance `python main.py` et place ta main devant la webcam, bien éclairée.
+3. Fais un **pouce levé** (poing fermé, pouce bien vertical) pendant environ 1 seconde pour allumer la lampe en rouge. 
+4. Lève l'**index** pour allumer la lampe en bleu.
+5. Lève **pouce + index** pour allumer la lampe en violet.
+6. Lève le **majeur** pour allumer la lampe en jaune.
+7. Lève **index + majeur** pour allumer la lampe en vert.
 
-1. Lance `python main.py` et place ta main devant la webcam, bien éclairée.
-2. Lève l'**index** pour dessiner.
-3. Lève **index + majeur** et pointe une couleur du menu pour la choisir.
-4. Ouvre la **paume** pour gommer.
-5. Fais un **pouce levé** (poing fermé, pouce bien vertical) pendant environ 1 seconde pour sauvegarder. Le fichier apparaît dans `output/`.
+8. Lève **annulaire + petit doigt** pour allumer la lampe en orange.
 
-Un délai de 1,5 s entre deux sauvegardes évite de créer plusieurs fichiers à la suite.
+9. Ouvre la **paume** pour allumer en aucune couleur.
+
+
+Un délai de 1,5 s entre deux couleurs évite de confondre 2 signaux pour une couleur.
 
 ---
 
@@ -150,13 +142,9 @@ Tous les réglages se trouvent dans **`config.py`** :
 
 | Paramètre | Rôle |
 |-----------|------|
-| `BRUSH_SIZE` | Épaisseur du pinceau |
-| `ERASER_RADIUS` | Rayon de la gomme |
-| `SMOOTHING_ALPHA` | Lissage : plus petit = plus fluide mais plus lent |
 | `MIN_DETECTION_CONFIDENCE`, `MIN_TRACKING_CONFIDENCE` | Sensibilité de MediaPipe |
 | `SAVE_COOLDOWN` | Délai minimum entre deux sauvegardes par geste |
 | `FINGER_MARGIN`, `THUMB_TIP_MARGIN`, `THUMB_FIST_MARGIN` | Seuils de reconnaissance des doigts |
-| `PALETTE` | Couleurs du menu |
 | `CAMERA_INDICES`, `FRAME_WIDTH`, `FRAME_HEIGHT` | Choix et résolution de la webcam |
 
 ---
@@ -180,17 +168,14 @@ Tous les réglages se trouvent dans **`config.py`** :
 
 ## 🗺️ Pistes d'amélioration
 
-- [ ] Réglage de l'épaisseur du pinceau par geste
-- [ ] Annuler / rétablir (undo / redo)
 - [ ] Prise en charge de deux mains
-- [ ] Export en SVG
 - [ ] Reconnaissance de gestes personnalisables
 
 ---
 
 ## 👤 Auteur
 
-Projet réalisé par [@irwinjessk](https://github.com/irwinjessk).
+Projet réalisé par [@maridasi47500](https://github.com/maridasi47500).
 
 Les retours et suggestions sont les bienvenus : ouvre une *issue* ou propose une *pull request*.
 

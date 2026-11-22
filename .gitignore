@@ -1,6 +1,9 @@
 cat > .gitignore << 'EOF'
 # Images générées par l'application
 output/
+.env~
+..env.un~
+.env
 
 # Environnement virtuel Python
 .venv/

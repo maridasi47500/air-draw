@@ -5,6 +5,12 @@ from __future__ import annotations
 import time
 
 import cv2
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 import numpy as np
 
 from camera import open_camera
@@ -56,9 +62,12 @@ class AirDrawApp:
         ## Specific ID/MAC of the bulb to set
         #bulb_info = scanner.getBulbInfoByID("ACCF235FFFFF")
         #self.bulb = WifiLedBulb(bulb_info["ipaddr"])
-        self.bulb = WifiLedBulb("192.168.1.37")
+        bulbipaddr = os.getenv("LAMPE_ADRESSE_IP")
+        self.bulb = WifiLedBulb(bulbipaddr)
 
-        self.color_time = 5  # seconds on each color
+        self.bulb.refreshState()
+
+        self.color_time = 0.5  # seconds on each color
 
         self.red = (255, 0, 0)
         self.white = (255, 255, 255)
@@ -67,6 +76,7 @@ class AirDrawApp:
         self.yellow = (255, 255, 0)
         self.springgreen = (125, 255, 0)
         self.green = (0, 255, 0)
+        self.purple = (160, 32, 240)
         self.turquoise = (0, 255, 125)
         self.cyan = (0, 255, 255)
         self.ocean = (0, 125, 255)
@@ -139,57 +149,50 @@ class AirDrawApp:
 
 
         if gesture == Gesture.ROUGE:
-            self.bulb.refreshState()
+
 
             # set to color and wait
-            self.bulb.setRgb(*self.red, persist=False)
-            time.sleep(self.color_time)
+            self.bulb.setRgb(*self.red, persist=True)
+            #time.sleep(self.color_time)
         elif gesture == Gesture.ORANGE:
-            self.bulb.refreshState()
 
             # set to color and wait
-            self.bulb.setRgb(*self.orange, persist=False)
-            time.sleep(self.color_time)
+            self.bulb.setRgb(*self.orange, persist=True)
+            #time.sleep(self.color_time)
         elif gesture == Gesture.JAUNE:
-            self.bulb.refreshState()
 
             # set to color and wait
-            self.bulb.setRgb(*self.yellow, persist=False)
-            time.sleep(self.color_time)
+            self.bulb.setRgb(*self.yellow, persist=True)
+            #time.sleep(self.color_time)
         elif gesture == Gesture.VERT:
-            self.bulb.refreshState()
 
             # set to color and wait
-            self.bulb.setRgb(*self.green, persist=False)
-            time.sleep(self.color_time)
+            self.bulb.setRgb(*self.green, persist=True)
+            #time.sleep(self.color_time)
         elif gesture == Gesture.BLEU:
-            self.bulb.refreshState()
 
             # set to color and wait
-            self.bulb.setRgb(*self.blue, persist=False)
-            time.sleep(self.color_time)
+            self.bulb.setRgb(*self.blue, persist=True)
+            #time.sleep(self.color_time)
         elif gesture == Gesture.VIOLET:
-            self.bulb.refreshState()
 
             # set to color and wait
-            self.bulb.setRgb(*self.purple, persist=False)
-            time.sleep(self.color_time)
+            self.bulb.setRgb(*self.purple, persist=True)
+            #time.sleep(self.color_time)
         elif gesture == Gesture.TURNOFF:
-            self.bulb.refreshState()
 
             # set to color and wait
-            self.bulb.setRgb(*self.white, persist=False)
-            time.sleep(self.color_time)
+            self.bulb.setRgb(*self.white, persist=True)
+            #time.sleep(self.color_time)
 
         else:
             self._lift_pen()
             if gesture == Gesture.NONE:
                 self.status = "Montre ta main"
-                self.bulb.refreshState()
 
                 # set to color and wait
-                self.bulb.setRgb(*self.black, persist=False)
-                time.sleep(self.color_time)
+                self.bulb.setRgb(*self.black, persist=True)
+                #time.sleep(self.color_time)
         #if gesture == Gesture.DRAW:
         #    self._on_draw(frame, tip)
         #elif gesture == Gesture.SELECT and tip is not None:
@@ -202,7 +205,7 @@ class AirDrawApp:
         #    self._lift_pen()
         #    if gesture == Gesture.NONE:
         #        self.status = "Montre ta main"
-        #return gesture
+        return gesture
 
     # ---------- clavier ----------
 
@@ -236,7 +239,7 @@ class AirDrawApp:
                 gesture = self._handle_gesture(frame, state)
 
                 composed = self.canvas.overlay_on(frame)
-                draw_menu(composed, self.buttons, self.color)
+                #draw_menu(composed, self.buttons, self.color)
                 shown = self.flash_msg if time.time() < self.flash_until else self.status
                 #draw_status(composed, gesture.name, shown)
 
