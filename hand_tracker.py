@@ -1,0 +1,63 @@
+"""Wrapper MediaPipe Hands : détection + classification du geste."""
+
+from __future__ import annotations
+
+import cv2
+import numpy as np
+from huggingface_hub import hf_hub_download
+
+model_path = hf_hub_download(
+    repo_id='litert-community/MediaPipe-HandLandmarker-Full',
+    filename='hand_landmarker.task',
+)
+
+from config import (
+    MAX_HANDS,
+    MIN_DETECTION_CONFIDENCE,
+    MIN_TRACKING_CONFIDENCE,
+    MODEL_COMPLEXITY,
+)
+from gestures import HandState, classify_gesture
+import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
+
+
+
+class HandTracker:
+    def __init__(self) -> None:
+        # STEP 2: Create an HandLandmarker object.
+        base_options = python.BaseOptions(model_asset_path=model_path)
+        options = vision.HandLandmarkerOptions(base_options=base_options,
+                                               num_hands=2)
+        self.detector = vision.HandLandmarker.create_from_options(options)
+        
+
+        
+
+    def detect(self, frame: np.ndarray, draw: bool = True) -> HandState | None:
+        """Analyse une frame BGR. Dessine le squelette de la main si draw=True."""
+        # STEP 3: Load the input image.
+        #image = mp.Image.create_from_file("image.jpg")
+        image=mp.Image(
+            image_format=mp.ImageFormat.SRGB,
+            data=frame
+        )
+        h, w = frame.shape[:2]
+        #image=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        
+        # STEP 4: Detect hand landmarks from the input image.
+        detection_result = self.detector.detect(image)
+
+        if not detection_result.hand_landmarks:
+            return None
+
+        hand_lms = detection_result.hand_landmarks[0]
+        #print(hand_lms)
+        #print(dict(hand_lms))
+        state = classify_gesture(hand_lms[0], w, h)
+
+        return state
+
+    def close(self) -> None:
+        print("hahah")
